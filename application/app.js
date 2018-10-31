@@ -1,40 +1,40 @@
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const logCatcher = require("./system/LogCatcher");
+import express from "express";
+import cors from "cors";
+import { json, urlencoded } from "body-parser";
+import logCatcher from "./system/LogCatcher";
 
-const swaggerConfig = require("./system/SwaggerConfig");
-const swaggerJSDoc = require("swagger-jsdoc");
-const swagger = require("swagger-ui-express");
+// import swaggerConfig from "./system/SwaggerConfig";
+// import swaggerJSDoc from "swagger-jsdoc";
+// import { serve, setup } from "swagger-ui-express";
+import routes from "./resources/routes";
 
 const app = express();
 app.use(cors());
 
 // Inicializamos body-parser
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(json());
+app.use(urlencoded({extended: true}));
 
 // Inicializamos swaggerSpec
-global.swaggerSpec = swaggerJSDoc(swaggerConfig);
+// global.swaggerSpec = swaggerJSDoc(swaggerConfig);
 
-if (process.env["PROD"] != 1) { // Sólo en desarrollo
-    app.use("/docs", swagger.serve, swagger.setup(global.swaggerSpec));
-    app.get("/swaggerSpec", (req, res) => {
-        res.json(swaggerSpec);
-    });
-}
+// if (process.env["PROD"] != 1) { // Sólo en desarrollo
+//     app.get("/docs", serve, setup(global.swaggerSpec));
+//     app.get("/swaggerSpec", (req, res) => {
+//         res.json(swaggerSpec);
+//     });
+// }
 
 
 // Registramos los routers
-const routes = require("./resources/routes");
 app.use("/api", logCatcher, routes); // Middleware para el log de las rutas
 
 // Manejamos el 404
 app.use((req, res) => {
-    const HttpResponse = new (require("./system/HttpResponse"))(res);
+    const HttpResponse = new (require("./system/HttpResponse").default)(res);
     HttpResponse.notFound({
         message: `El recurso ${req.method} ${req.url} no se encuentra`
     });
 });
 
-module.exports = app;
+export default app;

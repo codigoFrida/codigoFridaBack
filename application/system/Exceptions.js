@@ -1,4 +1,4 @@
-module.exports.ValidationException = (function() {
+export const ValidationException = (function() {
     function ValidationException(errores) {
         this.errores = errores
     }
@@ -12,7 +12,7 @@ module.exports.ValidationException = (function() {
     return ValidationException;
 })();
 
-module.exports.ControllerException = (function() {
+export const ControllerException = (function() {
     function ControllerException(responseMessage, data) {
         this.responseMessage = responseMessage;
         this.data = data;

@@ -1,13 +1,10 @@
-const config = require("../../appConfig").database;
-const useragent = require("express-useragent");
-const mysql = require("mysql");
-const tokenHelper = require("./TokenHelper");
+import { database as config } from "../../appConfig";
+import useragent from "express-useragent";
+import { createPool } from "mysql";
 
-const mysqlPool = mysql.createPool(config);
-
-module.exports = (req, res, next) => {
+const mysqlPool = createPool(config);
+const LogCatcher = (req, res, next) => {
     if (req.headers["Authorization"])
-        tokenHelper.verifyToken()
         mysqlPool.query("INSERT INTO bitacora VALUES (NULL, '0', ?, ?, ?, ?, DEFAULT)", [
             req.method,
             req.url,
@@ -16,3 +13,5 @@ module.exports = (req, res, next) => {
         ]);
     next();
 };
+
+export default LogCatcher;
