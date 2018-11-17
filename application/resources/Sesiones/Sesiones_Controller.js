@@ -25,6 +25,8 @@ class Sesiones_Controller {
         }).then(token => {
             Sesiones.checkSession(token).then(usuario => {
                 usuario[0].token = token;
+                delete usuario[0].contrasena;
+                delete usuario[0].sal;
                 response.created(usuario[0]);
             })
         }).catch(err => {
