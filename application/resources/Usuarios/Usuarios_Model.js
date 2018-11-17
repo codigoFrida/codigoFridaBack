@@ -1,43 +1,65 @@
-import Mysql from 'promise-mysql'
+import pool from '../../system/MysqlPool';
 
 class Usuarios_Model {
     constructor() {}
 
     getPaged(page, perPage) {
         return new Promise((resolve, reject) => {
-            resolve([
-                {
-                    id: 1,
-                    nombre: 'Paco el chido',
-                    apPaterno: 'Batista',
-                    apMaterno: 'Ibarra',
-                    fechaNacimiento: '01-01-1998',
-                    telefono: '3121196780',
-                    correo: 'fbatista.fxbi@gmail.com',
-                    fotografia: '68162381-6ee2-4825-b202-92ca93d9e99b',
-                    idRol: '1'
-                }
-            ]);
+            const limit = perPage;
+            const offset = (page - 1) * perPage;
+            const queryString = "SELECT * FROM usuarios LIMIT ? OFFSET ?";
+
+            pool.query(queryString, [
+                limit,
+                offset
+            ]).then(rows => {
+                resolve(rows);
+            }).catch(err => {
+                reject(err);
+            });
         })
     }
 
     getById(id) {
         return new Promise((resolve, reject) => {
-            if (id == 1)
-                resolve({
-                        id: 1,
-                        nombre: 'Paco el chido',
-                        apPaterno: 'Batista',
-                        apMaterno: 'Ibarra',
-                        fechaNacimiento: '01-01-1998',
-                        telefono: '3121196780',
-                        correo: 'fbatista.fxbi@gmail.com',
-                        fotografia: '68162381-6ee2-4825-b202-92ca93d9e99b',
-                        idRol: '1'
-                });
-            else reject({
-                message: "No se encuentra el usuario"
-            })
+            const queryString = "SELECT * FROM usuarios WHERE id = ?";
+
+            pool.query(queryString, [
+                id
+            ]).then(rows => {
+                resolve(rows[0]);
+            }).catch(err => {
+                reject(err);
+            });
+        })
+    }
+
+    getSinEquipoByRol(rolId) {
+        return new Promise((resolve, reject) => {
+            const queryString = "SELECT u.* FROM usuarios as u LEFT JOIN usuarios_equipos ue on u.id = ue.idUsuario WHERE ue.idEquipo IS NULL AND u.rolId = ?"
+
+            pool.query(queryString, [
+                rolId
+            ]).then(rows => {
+                resolve(rows);
+            }).catch(err => {
+                reject(err);
+            });
+        })
+    }
+
+    getMiPerfilById(id) {
+        return new Promise((resolve, reject) => {
+            const queryString = "SELECT id, nombre, apPaterno, apMaterno, fechaNacimiento, telefono, correo FROM usuarios WHERE id = ?";
+    
+            pool.query(queryString, [
+                id
+            ]).then(rows => {
+                resolve(rows);
+            }).catch(err => {
+                reject(err);
+            });
+
         })
     }
 }
