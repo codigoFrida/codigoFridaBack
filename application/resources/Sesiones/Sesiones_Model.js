@@ -20,7 +20,7 @@ class Sesiones_Model {
     }
 
     checkSession(token) {
-        const queryString = "SELECT u.* FROM sesiones AS s INNER JOIN usuarios AS u  ON s.usuarioId = u.id WHERE s.token = ?";
+        const queryString = "SELECT u.*, ANY_VALUE(ue.idEquipo) AS equipo FROM sesiones AS s INNER JOIN usuarios AS u ON s.usuarioId = u.id LEFT JOIN usuarios_equipos ue on u.id = ue.idUsuario GROUP BY id";
         return pool.query(queryString, [token]);
     }
 }
