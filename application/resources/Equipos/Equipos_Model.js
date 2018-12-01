@@ -5,9 +5,7 @@ class Equipos_Model {
 
   getPaged(page, perPage) {
     return new Promise((resolve, reject) => {
-      const limit = perPage;
-      const offset = (page - 1) * perPage;
-      const queryString = `SELECT id, nombre FROM equipos LIMIT ${limit} OFFSET ${offset}`;
+      const queryString = `SELECT id, nombre, codigo codigo FROM equipos`;
 
       var equipos;
       
@@ -54,7 +52,7 @@ class Equipos_Model {
 
   getById(idEquipo) {
     return new Promise((resolve, reject) => {
-      const queryString = "SELECT id, nombre FROM equipos WHERE id = ?";
+      const queryString = "SELECT id, nombre, codigo FROM equipos WHERE id = ?";
       var equipos;
 
       pool.query(queryString, [idEquipo]).then(rows => {
@@ -95,14 +93,6 @@ class Equipos_Model {
           equipos[0].integrantes = resultados[0];
           equipos[0].mentores = resultados[1];
           equipos[0].insignias = resultados[2];
-
-      //   resultados[1].forEach((resultado, index) => {
-      //       console.log(index, equipos)
-      //     equipos[index].mentores = resultado
-      //   })
-      //   resultados[2].forEach((resultado, index) => {
-      //     equipos[index].insignias = resultado
-      //   })
 
         console.log(JSON.stringify(equipos[0]));
         resolve(equipos[0]);

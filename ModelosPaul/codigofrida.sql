@@ -21,18 +21,20 @@
 
 DROP TABLE IF EXISTS `contenido_comentarios`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- -- SET character_set_client = utf8mb4 ;
+-- SET character_set_client = utf8mb4 ;
 CREATE TABLE `contenido_comentarios` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `idUsuario` int(11) NOT NULL,
   `idContenido` int(11) NOT NULL,
   `comentario` varchar(100) NOT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`idUsuario`,`idContenido`),
-  KEY `contenido_comentarios_modulo_contenidos_id_fk` (`idContenido`),
-  CONSTRAINT `contenido_comentarios_modulo_contenidos_id_fk` FOREIGN KEY (`idContenido`) REFERENCES `modulo_contenidos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  PRIMARY KEY (`id`),
+  KEY `contenido_comentarios_usuarios_id_fk` (`idUsuario`),
+  KEY `contenido_comentarios_contenidoadicional_id_fk` (`idContenido`),
+  CONSTRAINT `contenido_comentarios_contenidoadicional_id_fk` FOREIGN KEY (`idContenido`) REFERENCES `contenidoadicional` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `contenido_comentarios_usuarios_id_fk` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB;
+) ENGINE=InnoDB ;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -81,7 +83,7 @@ DROP TABLE IF EXISTS `ejercicios`;
 CREATE TABLE `ejercicios` (
   `idEquipo` int(11) NOT NULL,
   `idContenidoModulo` int(11) NOT NULL,
-  `archivoSubido` varchar(35) NOT NULL,
+  `archivoSubido` varchar(36) NOT NULL,
   `calificacion` int(3) NOT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -111,6 +113,7 @@ DROP TABLE IF EXISTS `equipos`;
 CREATE TABLE `equipos` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Esta es la clave',
   `nombre` varchar(30) NOT NULL,
+  `codigo` varchar(6) NOT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
@@ -123,7 +126,7 @@ CREATE TABLE `equipos` (
 
 LOCK TABLES `equipos` WRITE;
 /*!40000 ALTER TABLE `equipos` DISABLE KEYS */;
-INSERT INTO `equipos` VALUES (1,'Linces','2018-11-14 11:20:05','2018-11-14 11:20:05'),(2,'Papus','2018-11-15 10:28:16','2018-11-15 10:28:16');
+INSERT INTO `equipos` VALUES (1,'Linces','','2018-11-14 11:20:05','2018-11-14 11:20:05'),(2,'Papus','','2018-11-15 10:28:16','2018-11-15 10:28:16');
 /*!40000 ALTER TABLE `equipos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -201,8 +204,8 @@ CREATE TABLE `materiales` (
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `materiales_tiposarchivos_id_fk` (`idTipoArchivo`),
-  KEY `materiales_contenidoadicional_id_fk` (`idContenido`),
-  CONSTRAINT `materiales_contenidoadicional_id_fk` FOREIGN KEY (`idContenido`) REFERENCES `contenidoadicional` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  KEY `materiales_materiales_contenidoadicional_idMateriales_fk` (`idContenido`),
+  CONSTRAINT `materiales_materiales_contenidoadicional_idMateriales_fk` FOREIGN KEY (`idContenido`) REFERENCES `modulo_contenidos` (`id`),
   CONSTRAINT `materiales_tiposarchivos_id_fk` FOREIGN KEY (`idTipoArchivo`) REFERENCES `tiposarchivos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB ;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -259,6 +262,7 @@ DROP TABLE IF EXISTS `modulo_contenidos`;
 CREATE TABLE `modulo_contenidos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `idModulo` int(11) NOT NULL,
+  `idTipoArchivo` int(11) NOT NULL,
   `numero` int(2) NOT NULL,
   `descripcion` varchar(100) NOT NULL,
   `ejercicio` varchar(60) NOT NULL,
@@ -266,7 +270,9 @@ CREATE TABLE `modulo_contenidos` (
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `modulo_contenidos_modulos_id_fk` (`idModulo`),
-  CONSTRAINT `modulo_contenidos_modulos_id_fk` FOREIGN KEY (`idModulo`) REFERENCES `modulos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `modulo_contenidos_tiposarchivos_id_fk` (`idTipoArchivo`),
+  CONSTRAINT `modulo_contenidos_modulos_id_fk` FOREIGN KEY (`idModulo`) REFERENCES `modulos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `modulo_contenidos_tiposarchivos_id_fk` FOREIGN KEY (`idTipoArchivo`) REFERENCES `tiposarchivos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB ;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -365,6 +371,31 @@ INSERT INTO `roles` VALUES (1,'Frida','2018-11-14 11:06:36','2018-11-14 11:06:36
 UNLOCK TABLES;
 
 --
+-- Table structure for table `sesiones`
+--
+
+DROP TABLE IF EXISTS `sesiones`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `sesiones` (
+  `token` varchar(36) NOT NULL,
+  `usuarioId` int(11) NOT NULL,
+  PRIMARY KEY (`token`),
+  KEY `sesiones_usuarios_id_fk` (`usuarioId`),
+  CONSTRAINT `sesiones_usuarios_id_fk` FOREIGN KEY (`usuarioId`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB ;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sesiones`
+--
+
+LOCK TABLES `sesiones` WRITE;
+/*!40000 ALTER TABLE `sesiones` DISABLE KEYS */;
+/*!40000 ALTER TABLE `sesiones` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `tiposarchivos`
 --
 
@@ -411,10 +442,12 @@ CREATE TABLE `usuarios` (
   `contrasena` varchar(64) NOT NULL,
   `sal` varchar(32) NOT NULL,
   `fotografia` varchar(36) NOT NULL,
-  `rolId` varchar(10) NOT NULL,
+  `idRol` int(11) NOT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `usuarios_roles_id_fk` (`idRol`),
+  CONSTRAINT `usuarios_roles_id_fk` FOREIGN KEY (`idRol`) REFERENCES `roles` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 ;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -424,7 +457,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'asd','asd','asd','2018-11-01','3346351','pmoran0@ucol.mx','pmoran0','dsglsnalg','sohklns','1','2018-11-14 11:07:07','2018-11-14 11:07:07'),(2,'jkl','jkl','jkl','2018-11-02','3349654','jkl@ucol.mx','jkl','lkjklsf','lksjdg','1','2018-11-14 11:19:47','2018-11-14 11:19:47'),(3,'María','owieht','pweotu','2018-11-15','3141234','iue@iue.mx','iue','iuty','poquet','2','2018-11-15 10:24:50','2018-11-15 10:24:50'),(4,'irh','petu','petu','2018-11-15','3141254','petu@ucol.mx','petu','irtp','pwouy','2','2018-11-15 10:26:25','2018-11-15 10:26:25'),(5,'Paula','sdf','chong','2018-11-08','3124567','ching@ucol.mx','fss','dfsfsg','sfssd','1','2018-11-15 11:54:55','2018-11-15 11:54:55');
+INSERT INTO `usuarios` VALUES (1,'asd','asd','asd','2018-11-01','3346351','pmoran0@ucol.mx','pmoran0','dsglsnalg','sohklns',1,'2018-11-14 11:07:07','2018-11-14 11:07:07'),(2,'jkl','jkl','jkl','2018-11-02','3349654','jkl@ucol.mx','jkl','lkjklsf','lksjdg',1,'2018-11-14 11:19:47','2018-11-14 11:19:47'),(3,'María','owieht','pweotu','2018-11-15','3141234','iue@iue.mx','iue','iuty','poquet',2,'2018-11-15 10:24:50','2018-11-15 10:24:50'),(4,'irh','petu','petu','2018-11-15','3141254','petu@ucol.mx','petu','irtp','pwouy',2,'2018-11-15 10:26:25','2018-11-15 10:26:25'),(5,'Paula','sdf','chong','2018-11-08','3124567','ching@ucol.mx','fss','dfsfsg','sfssd',1,'2018-11-15 11:54:55','2018-11-15 11:54:55');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -466,4 +499,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-11-16 13:38:31
+-- Dump completed on 2018-12-01 17:00:21
