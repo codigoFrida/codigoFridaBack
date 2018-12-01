@@ -21,7 +21,7 @@
 
 DROP TABLE IF EXISTS `contenido_comentarios`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- -- SET character_set_client = utf8mb4 ;
+-- SET character_set_client = utf8mb4 ;
 CREATE TABLE `contenido_comentarios` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `idUsuario` int(11) NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE `contenido_comentarios` (
   KEY `contenido_comentarios_contenidoadicional_id_fk` (`idContenido`),
   CONSTRAINT `contenido_comentarios_contenidoadicional_id_fk` FOREIGN KEY (`idContenido`) REFERENCES `contenidoadicional` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `contenido_comentarios_usuarios_id_fk` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB ;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -205,7 +205,7 @@ CREATE TABLE `materiales` (
   PRIMARY KEY (`id`),
   KEY `materiales_tiposarchivos_id_fk` (`idTipoArchivo`),
   KEY `materiales_materiales_contenidoadicional_idMateriales_fk` (`idContenido`),
-  CONSTRAINT `materiales_materiales_contenidoadicional_idMateriales_fk` FOREIGN KEY (`idContenido`) REFERENCES `materiales_contenidoadicional` (`idmateriales`),
+  CONSTRAINT `materiales_materiales_contenidoadicional_idMateriales_fk` FOREIGN KEY (`idContenido`) REFERENCES `modulo_contenidos` (`id`),
   CONSTRAINT `materiales_tiposarchivos_id_fk` FOREIGN KEY (`idTipoArchivo`) REFERENCES `tiposarchivos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB ;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -371,6 +371,31 @@ INSERT INTO `roles` VALUES (1,'Frida','2018-11-14 11:06:36','2018-11-14 11:06:36
 UNLOCK TABLES;
 
 --
+-- Table structure for table `sesiones`
+--
+
+DROP TABLE IF EXISTS `sesiones`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `sesiones` (
+  `token` varchar(36) NOT NULL,
+  `usuarioId` int(11) NOT NULL,
+  PRIMARY KEY (`token`),
+  KEY `sesiones_usuarios_id_fk` (`usuarioId`),
+  CONSTRAINT `sesiones_usuarios_id_fk` FOREIGN KEY (`usuarioId`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB ;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sesiones`
+--
+
+LOCK TABLES `sesiones` WRITE;
+/*!40000 ALTER TABLE `sesiones` DISABLE KEYS */;
+/*!40000 ALTER TABLE `sesiones` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `tiposarchivos`
 --
 
@@ -474,4 +499,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-12-01 16:34:01
+-- Dump completed on 2018-12-01 17:00:21
