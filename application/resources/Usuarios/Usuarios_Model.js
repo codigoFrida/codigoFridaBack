@@ -36,12 +36,12 @@ class Usuarios_Model {
         })
     }
 
-    getSinEquipoByRol(rolId) {
+    getSinEquipoByRol(idRol) {
         return new Promise((resolve, reject) => {
-            const queryString = "SELECT u.* FROM usuarios as u LEFT JOIN usuarios_equipos ue on u.id = ue.idUsuario WHERE ue.idEquipo IS NULL AND u.rolId = ?"
+            const queryString = "SELECT u.* FROM usuarios as u LEFT JOIN usuarios_equipos ue on u.id = ue.idUsuario WHERE ue.idEquipo IS NULL AND u.idRol = ?"
 
             pool.query(queryString, [
-                rolId
+                idRol
             ]).then(rows => {
                 resolve(rows);
             }).catch(err => {
@@ -81,7 +81,7 @@ class Usuarios_Model {
                 hash,
                 sal,
                 usuario.fotografia, 
-                usuario.rolId
+                usuario.idRol
             ]).then(meta => {
                 resolve(meta)
             }).catch(err => {
