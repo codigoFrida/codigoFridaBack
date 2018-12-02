@@ -1,5 +1,8 @@
 import { Router } from 'express'
 import Usuarios_Controller from './Usuarios_Controller'
+import Sesiones_Controller from '../Sesiones/Sesiones_Controller';
+
+const middlewareSesion = new Sesiones_Controller().checkSesion;
 
 const router = Router();
 
