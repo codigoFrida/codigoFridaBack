@@ -56,11 +56,11 @@ class Modulos_Model {
                 const promesasMateriales = [];
                 const queryStringComentarios = "SELECT cc.idUsuario, u.nombre AS nombreAutor, cc.createdAt as fecha, cc.comentario FROM contenido_comentarios AS cc INNER JOIN usuarios AS u on cc.idUsuario = u.id where cc.idContenido = ?"
                 const promesasComentarios = [];
-        
+                
                 g_contenidos.forEach(contenido => {
                     // Materiales
                     const promesaMateriales = pool.query(queryStringMateriales, [
-                        contenido.idModulo
+                        contenido.id
                     ]);
                     promesasMateriales.push(promesaMateriales);
         
