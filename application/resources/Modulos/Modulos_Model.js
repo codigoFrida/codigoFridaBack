@@ -6,14 +6,11 @@ class Modulos_Model {
 
     getPaged(page, perPage) {
         return new Promise((resolve, reject) => {
-            const limit = perPage;
-            const offset = (page - 1) * perPage;
-            const queryString = "SELECT id, numero, nombre, fechaLimite, descripcion FROM modulos LIMIT ? OFFSET ? ";
+            const queryString = `SELECT id, nombre as nombreModulo, fechaLimite, descripcion, cast((coalesce(progreso.subidos / progreso.todos, 0) * 100) as SIGNED) as progreso FROM modulos LEFT JOIN (
+                SELECT idModulo, count(*) as todos, count(archivoSubido) as subidos from modulos inner join modulo_contenidos mc on modulos.id = mc.idModulo left join ejercicios e on mc.id = e.idContenidoModulo group by idModulo
+              ) AS progreso on progreso.idModulo = id`;
 
-            pool.query(queryString, [
-                limit,
-                offset
-            ]).then(rows => {
+            pool.query(queryString).then(rows => {
                 resolve(rows);
             }).catch(err => {
                 reject(err);
@@ -27,7 +24,9 @@ class Modulos_Model {
             var g_modulo;
             var g_contenidos;
         
-            const queryString = "SELECT id, nombre as nombreModulo, fechaLimite, descripcion FROM modulos where id = ?";
+            const queryString = `SELECT id, nombre as nombreModulo, fechaLimite, descripcion, cast((coalesce(progreso.subidos / progreso.todos, 0) * 100) as SIGNED) as progreso FROM modulos LEFT JOIN (
+                SELECT idModulo, count(*) as todos, count(archivoSubido) as subidos from modulos inner join modulo_contenidos mc on modulos.id = mc.idModulo left join ejercicios e on mc.id = e.idContenidoModulo group by idModulo
+              ) AS progreso on progreso.idModulo = id WHERE id = ?`;
             pool.query(queryString, [
                 id
             ]).then(modulos => {
