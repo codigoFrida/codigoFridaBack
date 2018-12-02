@@ -108,6 +108,24 @@ class Modulos_Model {
             })
         })
     }
+
+    addEjercicio(ejercicio) {
+        return new Promise((resolve, reject) => {
+            const queryString = `insert into ejercicios (idEquipo, idContenidoModulo, idUsuario, nombreArchivo, archivoSubido) VALUES
+                (?, ?, ?, ?, ?)`
+            pool.query(queryString, [
+                ejercicio.idEquipo, 
+                ejercicio.idContenido,
+                ejercicio.idUsuario, 
+                ejercicio.nombreArchivo,
+                ejercicio.archivoSubido
+            ]).then(meta => {
+                resolve(meta)
+            }).catch(err => {
+                reject(err)
+            })
+        })
+    }
 }
 
 export default Modulos_Model;
