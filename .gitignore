@@ -81,3 +81,6 @@ dist/*
 
 application.old/
 ssl/
+
+# publicos
+application/public/*
