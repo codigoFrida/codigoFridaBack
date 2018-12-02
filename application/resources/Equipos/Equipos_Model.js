@@ -1,4 +1,5 @@
 import pool from '../../system/MysqlPool';
+import randomStringGenerator from 'randomstring';
 
 class Equipos_Model {
   constructor() {}
@@ -16,14 +17,14 @@ class Equipos_Model {
       
         rows.forEach(row => {
           //Promesa Query para Obtener Fridas
-          var queryString = "SELECT ue.id, ue.rolId, ue.nombre, ue2.idEquipo FROM usuarios as ue INNER JOIN usuarios_equipos as ue2 on ue.id = ue2.idUsuario WHERE ue.rolId=1 && ue2.idEquipo=?";
+          var queryString = "SELECT ue.id, ue.idRol, ue.nombre, ue2.idEquipo FROM usuarios as ue INNER JOIN usuarios_equipos as ue2 on ue.id = ue2.idUsuario WHERE ue.idRol=1 && ue2.idEquipo=?";
           const promesa1 = pool.query(queryString, [
               row.id
           ]);
           promesas.push(promesa1);
           
           //Promesa Query para Obtener Mentores
-          queryString = "SELECT ue.id, ue.rolId, ue.nombre, ue2.idEquipo FROM usuarios as ue INNER JOIN usuarios_equipos as ue2 on ue.id = ue2.idUsuario WHERE ue.rolId=2 && ue2.idEquipo=?";
+          queryString = "SELECT ue.id, ue.idRol, ue.nombre, ue2.idEquipo FROM usuarios as ue INNER JOIN usuarios_equipos as ue2 on ue.id = ue2.idUsuario WHERE ue.idRol=2 && ue2.idEquipo=?";
           const promesa2 = pool.query(queryString, [
                 row.id
             ]);
@@ -63,14 +64,14 @@ class Equipos_Model {
 
         rows.forEach(row => {
           //Promesa Query para Obtener Fridas
-          var queryString = "SELECT u.id, u.nombre, u.apPaterno, u.apMaterno, u.apPaterno, u.fotografia, u.correo, u.fechaNacimiento, u.fotografia FROM usuarios AS u INNER JOIN usuarios_equipos ue on u.id = ue.idUsuario WHERE u.rolId = 1 && ue.idEquipo = ?";
+          var queryString = "SELECT u.id, u.nombre, u.apPaterno, u.apMaterno, u.apPaterno, u.fotografia, u.correo, u.fechaNacimiento, u.fotografia FROM usuarios AS u INNER JOIN usuarios_equipos ue on u.id = ue.idUsuario WHERE u.idRol = 1 && ue.idEquipo = ?";
           const promesa1 = pool.query(queryString, [
             row.id
           ]);
           promesas.push(promesa1);
           
           //Promesa Query para Obtener Mentores
-          queryString = "SELECT u.id, u.nombre, u.apPaterno, u.apMaterno, u.apPaterno, u.fotografia, u.correo FROM usuarios AS u INNER JOIN usuarios_equipos ue on u.id = ue.idUsuario WHERE u.rolId = 2 && ue.idEquipo = ?";
+          queryString = "SELECT u.id, u.nombre, u.apPaterno, u.apMaterno, u.apPaterno, u.fotografia, u.correo FROM usuarios AS u INNER JOIN usuarios_equipos ue on u.id = ue.idUsuario WHERE u.idRol = 2 && ue.idEquipo = ?";
           const promesa2 = pool.query(queryString, [
               row.id
             ]);
@@ -99,6 +100,44 @@ class Equipos_Model {
       }).catch(err => {
           reject(err);
       });
+    })
+  }
+
+  getEquipoByClave(codigo) {
+    return new Promise((resolve, reject) => {
+      pool.query('SELECT * FROM equipos WHERE codigo = ?', [
+        codigo
+      ]).then(result => {
+        resolve(result[0])
+      }).catch(err => {
+        reject(err);
+      })
+    })
+  }
+
+  addEquipo(nombre) {
+    const codigo = randomStringGenerator.generate(6);
+    return new Promise((resolve, reject) => {
+      pool.query('INSERT INTO equipos (nombre, codigo) VALUES (?, ?)', [
+        nombre,
+        codigo
+      ]).then(result => {
+        resolve(result)
+      }).catch(err => {
+        reject(err);
+      })
+    })
+  }
+  
+  addUserToEquipo(idUsuario, idEquipo) {
+    const queryString = 'INSERT INTO usuarios_equipos (idUsuario, idEquipo) VALUES (?, ?)';
+    return new Promise((resolve, reject) => {
+      pool.query(queryString, [
+        idUsuario,
+        idEquipo
+      ]).then(meta => {
+        resolve(meta);
+      }).catch(err => reject(err))
     })
   }
 }
