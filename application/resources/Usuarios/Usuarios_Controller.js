@@ -53,8 +53,8 @@ class Usuarios_Controller {
         const Response = new HttpResponse(res);
         const Equipos = new Equipos_Model();
         const Usuarios = new Usuarios_Model();
-        let fotografiaBase64;
-        let nombreFotografia;
+        let fotografiaBase64 = null;
+        let nombreFotografia = null;
         let idEquipo;
         let idUsuario;
 
@@ -70,13 +70,19 @@ class Usuarios_Controller {
             delete req.body.equipo;
 
             // Guardamos la imagen en una variable
-            fotografiaBase64 = req.body.fotografia;
-            nombreFotografia = UUID();
-            req.body.fotografia = nombreFotografia;
+            if (req.fotografia) {
+                fotografiaBase64 = req.body.fotografia;
+                nombreFotografia = UUID();
+                req.body.fotografia = nombreFotografia;
+            } else {
+                req.body.fotografia = 0
+            }
 
             return Usuarios.addUser(req.body);
         }).then(usuario => {
-            fs.writeFileSync(`application/public/img/${nombreFotografia}.jpg`, fotografiaBase64, 'base64');
+            if (fotografiaBase64) {
+                fs.writeFileSync(`application/public/img/${nombreFotografia}.jpg`, fotografiaBase64, 'base64');
+            }
             idUsuario = usuario.insertId;
             return Equipos.addUserToEquipo(usuario.insertId, idEquipo)
         }).then(meta => {
