@@ -10,7 +10,7 @@ const middlewareSesion = new Sesiones_Controller().checkSesion;
 
 const router = Router();
 
-router.use('/usuarios', middlewareSesion, Usuarios_Router)
+router.use('/usuarios', Usuarios_Router)
 router.use('/sesiones', Sesiones_Router)
 router.use('/modulos', middlewareSesion, Modulos_Router)
 router.use('/conteidoAdicional', middlewareSesion, ContenidoAdicional_Router)

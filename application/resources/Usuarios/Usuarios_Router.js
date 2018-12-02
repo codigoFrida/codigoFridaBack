@@ -5,7 +5,8 @@ const router = Router();
 
 const controller = new Usuarios_Controller();
 
-router.get('/', controller.getPaged)
-router.get('/:id', controller.getById)
+router.get('/', middlewareSesion, controller.getPaged)
+router.get('/:id', middlewareSesion, controller.getById)
+router.post('/', controller.addUser)
 
 export default router;

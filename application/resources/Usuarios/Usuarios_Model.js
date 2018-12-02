@@ -1,4 +1,6 @@
 import pool from '../../system/MysqlPool';
+import saltGenerator from 'randomstring';
+import encrypt from 'js-sha256'
 
 class Usuarios_Model {
     constructor() {}
@@ -60,6 +62,31 @@ class Usuarios_Model {
                 reject(err);
             });
 
+        })
+    }
+
+    addUser(usuario) {
+        const sal = saltGenerator.generate(32);
+        const hash = encrypt.sha256(sal + usuario.contrasena);
+
+        return new Promise((resolve, reject) => {
+            const queryString = 'INSERT INTO usuarios (nombre, apPaterno, apMaterno, fechaNacimiento, telefono, correo, contrasena, sal, fotografia, idRol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            pool.query(queryString, [
+                usuario.nombre,
+                usuario.apPaterno,
+                usuario.apMaterno,
+                usuario.fechaNacimiento,
+                usuario.telefono,
+                usuario.correo,
+                hash,
+                sal,
+                usuario.fotografia, 
+                usuario.rolId
+            ]).then(meta => {
+                resolve(meta)
+            }).catch(err => {
+                reject(err)
+            })
         })
     }
 }

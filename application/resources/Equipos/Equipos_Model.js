@@ -1,4 +1,5 @@
 import pool from '../../system/MysqlPool';
+import randomStringGenerator from 'randomstring';
 
 class Equipos_Model {
   constructor() {}
@@ -99,6 +100,44 @@ class Equipos_Model {
       }).catch(err => {
           reject(err);
       });
+    })
+  }
+
+  getEquipoByClave(codigo) {
+    return new Promise((resolve, reject) => {
+      pool.query('SELECT * FROM equipos WHERE codigo = ?', [
+        codigo
+      ]).then(result => {
+        resolve(result[0])
+      }).catch(err => {
+        reject(err);
+      })
+    })
+  }
+
+  addEquipo(nombre) {
+    const codigo = randomStringGenerator.generate(6);
+    return new Promise((resolve, reject) => {
+      pool.query('INSERT INTO equipos (nombre, codigo) VALUES (?, ?)', [
+        nombre,
+        codigo
+      ]).then(result => {
+        resolve(result)
+      }).catch(err => {
+        reject(err);
+      })
+    })
+  }
+  
+  addUserToEquipo(idUsuario, idEquipo) {
+    const queryString = 'INSERT INTO usuarios_equipos (idUsuario, idEquipo) VALUES (?, ?)';
+    return new Promise((resolve, reject) => {
+      pool.query(queryString, [
+        idUsuario,
+        idEquipo
+      ]).then(meta => {
+        resolve(meta);
+      }).catch(err => reject(err))
     })
   }
 }

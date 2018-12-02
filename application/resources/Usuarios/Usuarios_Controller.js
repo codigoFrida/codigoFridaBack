@@ -1,5 +1,8 @@
 import HttpResponse from '../../system/HttpResponse'
 import Usuarios_Model from './Usuarios_Model'
+import Equipos_Model from '../Equipos/Equipos_Model';
+import UUID from 'uuid/v4'
+import fs from 'fs'
 
 class Usuarios_Controller {
     constructor() {}
@@ -43,6 +46,46 @@ class Usuarios_Controller {
             Response.ok(modulo);
         }).catch(err => {
             Response.notFound(err);
+        })
+    }
+
+    addUser(req, res) {
+        const Response = new HttpResponse(res);
+        const Equipos = new Equipos_Model();
+        const Usuarios = new Usuarios_Model();
+        let fotografiaBase64;
+        let nombreFotografia;
+        let idEquipo;
+        let idUsuario;
+
+        new Promise((resolve, reject) => {
+            // Primero revisamos si el equipo es un nombre o una clave
+            if (req.body.equipo.nombre) {// Es un nombre, hay que crear el equipo
+                Equipos.addEquipo(req.body.equipo.nombre).then(meta => resolve(meta.insertId))
+            } else { // Es una clave, hay que obtener el id del equipo
+                Equipos.getEquipoByClave(req.body.equipo.clave).then(equipo => resolve(equipo.id))
+            }
+        }).then(equipo => {
+            idEquipo = equipo;
+            delete req.body.equipo;
+
+            // Guardamos la imagen en una variable
+            fotografiaBase64 = req.body.fotografia;
+            nombreFotografia = UUID();
+            req.body.fotografia = nombreFotografia;
+
+            return Usuarios.addUser(req.body);
+        }).then(usuario => {
+            fs.writeFileSync(`application/public/img/${nombreFotografia}.jpg`, fotografiaBase64, 'base64');
+            idUsuario = usuario.insertId;
+            return Equipos.addUserToEquipo(usuario.insertId, idEquipo)
+        }).then(meta => {
+            return Usuarios.getById(idUsuario)
+        }).then(usuario => {
+            Response.created(usuario);
+        }).catch(err => {
+            console.error(err);
+            Response.ErrorGenerico();   
         })
     }
 }
