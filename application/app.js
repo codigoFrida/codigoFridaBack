@@ -25,6 +25,8 @@ app.use(urlencoded({extended: true}));
 //     });
 // }
 
+// Archivos públicos
+app.use('/public', express.static('application/public'));
 
 // Registramos los routers
 app.use("/api", logCatcher, routes); // Middleware para el log de las rutas
