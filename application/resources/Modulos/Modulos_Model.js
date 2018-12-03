@@ -31,7 +31,6 @@ class Modulos_Model {
                 id
             ]).then(modulos => {
                 console.log(modulos.length);
-                // if (modulos.length == 0) { throw modulos; }
                 g_modulo = modulos[0];
         
                 // Contenidos
@@ -124,6 +123,45 @@ class Modulos_Model {
             }).catch(err => {
                 reject(err)
             })
+        })
+    }
+
+    getNextContenidoByModulo(id) {
+        return new Promise((resolve, reject) => {
+            const queryString = `select COALESCE(MAX(numero), 0) + 1 as siguiente from modulo_contenidos where idModulo=?`
+            pool.query(queryString, [id]).then(numero => resolve(numero[0].siguiente)).catch(err => reject(err));
+        })
+    }
+
+    addContenido(contenido) {
+        return new Promise((resolve, reject) => {
+            const queryString = `INSERT INTO modulo_contenidos (idModulo, numero, descripcion, ejercicio) VALUES 
+            (?, ?, ?, ?)`;
+            pool.query(queryString, [
+                contenido.idModulo,
+                contenido.numero,
+                contenido.descripcion,
+                contenido.ejercicio
+            ]).then(meta => resolve(meta)).catch(err => reject(err));
+        })
+    }
+
+    getContenidoById(id) {
+        return new Promise((resolve, reject) => {
+            const queryString = `Select * from modulo_contenidos where id = ?`
+            pool.query(queryString, [id]).then(contenido => resolve(contenido[0] || null)).catch(err => reject(err));
+        })
+    }
+
+    addMaterial(material) {
+        return new Promise((resolve, reject) => {
+            const queryString = `INSERT INTO materiales (idContenido, nombre, archivo) VALUES 
+            (?, ?, ?)`;
+            pool.query(queryString, [
+                material.idContenido,
+                material.nombre,
+                material.archivo
+            ]).then(meta => resolve(meta)).catch(err => reject(err));
         })
     }
 }

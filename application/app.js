@@ -12,8 +12,8 @@ const app = express();
 app.use(cors());
 
 // Inicializamos body-parser
-app.use(json());
-app.use(urlencoded({extended: true}));
+app.use(json({limit: '50mb', extended: true}));
+app.use(urlencoded({limit: '50mb', extended: true}));
 
 // Inicializamos swaggerSpec
 // global.swaggerSpec = swaggerJSDoc(swaggerConfig);
