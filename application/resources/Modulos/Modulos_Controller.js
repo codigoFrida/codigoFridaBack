@@ -11,7 +11,7 @@ class Modulos_Controller {
         const Response = new HttpResponse(res);
         const Modulos = new Modulos_Model();
 
-        Modulos.getPaged(0, 0).then(modulos => {
+        Modulos.getPaged(req.idEquipo).then(modulos => {
             Response.ok(modulos);
         }).catch(err => {
             Response.internalServerError(err);
@@ -23,7 +23,7 @@ class Modulos_Controller {
         const Modulos = new Modulos_Model();
         const idModulo = req.params.id
 
-        Modulos.getById(idModulo).then(modulo => {
+        Modulos.getById(idModulo, req.idEquipo).then(modulo => {
             Response.ok(modulo);
         }).catch(err => {
             Response.notFound(err);

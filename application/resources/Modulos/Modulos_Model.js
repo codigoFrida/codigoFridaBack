@@ -4,13 +4,13 @@ import { reject } from 'bluebird';
 class Modulos_Model {
     constructor() {}
 
-    getPaged(page, perPage) {
+    getPaged(idEquipo) {
         return new Promise((resolve, reject) => {
             const queryString = `SELECT id, numero, nombre as nombreModulo, fechaLimite, descripcion, cast((coalesce(progreso.subidos / progreso.todos, 0) * 100) as SIGNED) as progreso FROM modulos LEFT JOIN (
-                SELECT idModulo, count(*) as todos, count(archivoSubido) as subidos from modulos inner join modulo_contenidos mc on modulos.id = mc.idModulo left join ejercicios e on mc.id = e.idContenidoModulo group by idModulo
+                SELECT idModulo, count(*) as todos, count(archivoSubido) as subidos from modulos inner join modulo_contenidos mc on modulos.id = mc.idModulo left join ejercicios e on mc.id = e.idContenidoModulo and e.idEquipo = ? group by idModulo
               ) AS progreso on progreso.idModulo = id`;
 
-            pool.query(queryString).then(rows => {
+            pool.query(queryString, [idEquipo]).then(rows => {
                 resolve(rows);
             }).catch(err => {
                 reject(err);
@@ -18,16 +18,17 @@ class Modulos_Model {
         })
     }
 
-    getById(id) {
+    getById(id, idEquipo) {
         return new Promise((resolve, reject) => {
 
             var g_modulo;
             var g_contenidos;
         
-            const queryString = `SELECT id, numero,  nombre as nombreModulo, fechaLimite, descripcion, cast((coalesce(progreso.subidos / progreso.todos, 0) * 100) as SIGNED) as progreso FROM modulos LEFT JOIN (
-                SELECT idModulo, count(*) as todos, count(archivoSubido) as subidos from modulos inner join modulo_contenidos mc on modulos.id = mc.idModulo left join ejercicios e on mc.id = e.idContenidoModulo group by idModulo
+            const queryString = `SELECT id, numero, nombre as nombreModulo, fechaLimite, descripcion, cast((coalesce(progreso.subidos / progreso.todos, 0) * 100) as SIGNED) as progreso FROM modulos LEFT JOIN (
+                SELECT idModulo, count(*) as todos, count(archivoSubido) as subidos from modulos inner join modulo_contenidos mc on modulos.id = mc.idModulo left join ejercicios e on mc.id = e.idContenidoModulo and e.idEquipo = ? group by idModulo
               ) AS progreso on progreso.idModulo = id WHERE id = ?`;
             pool.query(queryString, [
+                idEquipo,
                 id
             ]).then(modulos => {
                 console.log(modulos.length);
