@@ -52,7 +52,7 @@ class Modulos_Model {
                 // Llenamos los materiales y comentarios del contenido a partir de aquí
                 const queryStringMateriales = "SELECT id, nombre as urlDescarga, nombre as nombreArchivo FROM materiales WHERE idContenido = ?"
                 const promesasMateriales = [];
-                const queryStringComentarios = "SELECT cc.idUsuario, u.nombre AS nombreAutor, cc.createdAt as fecha, cc.comentario FROM contenido_comentarios AS cc INNER JOIN usuarios AS u on cc.idUsuario = u.id where cc.idContenido = ?"
+                const queryStringComentarios = "SELECT cc.idUsuario, CONCAT(u.nombre, ' ', u.apPaterno, ' ', u.apPaterno) AS nombreAutor, cc.createdAt as fecha, cc.comentario FROM contenido_comentarios AS cc INNER JOIN usuarios AS u on cc.idUsuario = u.id where cc.idContenido = ?"
                 const promesasComentarios = [];
                 const queryStringEjercicio = "SELECT mc.ejercicio as descripcion, e.archivoSubido from modulo_contenidos as mc left join ejercicios e on mc.id = e.idContenidoModulo where mc.id = ?"
                 const promesasEjercicio = [];
@@ -161,6 +161,18 @@ class Modulos_Model {
                 material.idContenido,
                 material.nombre,
                 material.archivo
+            ]).then(meta => resolve(meta)).catch(err => reject(err));
+        })
+    }
+
+    addComentario(comentario) {
+        return new Promise((resolve, reject) => {
+            const queryString = `INSERT INTO contenido_comentarios (idUsuario, idContenido, comentario) VALUES 
+            (?, ?, ?)`;
+            pool.query(queryString, [
+                comentario.idUsuario,
+                comentario.idContenido,
+                comentario.comentario
             ]).then(meta => resolve(meta)).catch(err => reject(err));
         })
     }

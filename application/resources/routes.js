@@ -13,7 +13,7 @@ const router = Router();
 router.use('/usuarios', Usuarios_Router)
 router.use('/sesiones', Sesiones_Router)
 router.use('/modulos', middlewareSesion, Modulos_Router)
-router.use('/conteidoAdicional', middlewareSesion, ContenidoAdicional_Router)
+router.use('/contenidoAdicional', middlewareSesion, ContenidoAdicional_Router)
 router.use('/equipos', middlewareSesion, Equipos_Router)
 
 export default router
