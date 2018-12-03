@@ -79,6 +79,8 @@ class Modulos_Controller {
         ejercicio.idContenido = req.params.idContenido
 
         Modulos.addEjercicio(ejercicio).then(meta => {
+            return Modulos.asignarInsignia(req.idEquipo, req.params.idModulo)
+        }).then(meta => {
             Response.ok(meta);
         }).catch(err => {
             console.error(err);
