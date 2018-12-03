@@ -70,7 +70,7 @@ class Usuarios_Controller {
             delete req.body.equipo;
 
             // Guardamos la imagen en una variable
-            if (req.fotografia) {
+            if (req.body.fotografia) {
                 fotografiaBase64 = req.body.fotografia;
                 nombreFotografia = UUID();
                 req.body.fotografia = nombreFotografia;
