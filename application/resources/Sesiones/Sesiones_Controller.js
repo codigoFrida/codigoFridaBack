@@ -43,6 +43,7 @@ class Sesiones_Controller {
             if (verificacion.length) {
                 req.token = req.headers["authorization"];
                 req.idUsuario = verificacion[0].id;
+                req.idEquipo = verificacion[0].equipo;
                 delete req.headers["authorization"];
                 next();
             } else {
