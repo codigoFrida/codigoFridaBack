@@ -36,7 +36,7 @@ class Modulos_Model {
         
                 // Contenidos
                 if (g_modulo) {
-                    const queryString = "SELECT mc.id, mc.descripcion FROM modulo_contenidos AS mc LEFT JOIN ejercicios e on mc.id = e.idContenidoModulo where mc.idModulo = ?";
+                    const queryString = "SELECT mc.id, mc.descripcion FROM modulo_contenidos AS mc where mc.idModulo = ?";
                     console.log(queryString);
                     return pool.query(queryString, [
                         g_modulo.id
