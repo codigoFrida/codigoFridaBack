@@ -78,7 +78,7 @@ class Equipos_Model {
           promesas2.push(promesa2);
 
           //Promesa Query para Obtener Insignias
-          queryString = "SELECT insignia2.id, insignia.id AS idInsignia, insignia.nombre, insignia.descripcion FROM insignia INNER JOIN equipos_insignia insignia2 on insignia.id = insignia2.idInsignia WHERE insignia2.idEquipo = ?";
+          queryString = "SELECT insignia2.id, insignia.id AS idInsignia, m.numero as numeroModulo, insignia.nombre, insignia.descripcion FROM insignia INNER JOIN equipos_insignia insignia2 on insignia.id = insignia2.idInsignia inner join modulos m on insignia.idModulo = m.id WHERE insignia2.idEquipo = ?";
           const promesa3 = pool.query(queryString, [
               row.id
             ]);
