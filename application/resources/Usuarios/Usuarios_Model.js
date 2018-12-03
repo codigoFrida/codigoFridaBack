@@ -70,7 +70,7 @@ class Usuarios_Model {
         const hash = encrypt.sha256(sal + usuario.contrasena);
 
         return new Promise((resolve, reject) => {
-            const queryString = 'INSERT INTO usuarios (nombre, apPaterno, apMaterno, fechaNacimiento, telefono, correo, contrasena, sal, fotografia, idRol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            const queryString = 'INSERT INTO usuarios (nombre, apPaterno, apMaterno, fechaNacimiento, telefono, correo, escuela, disciplina, contrasena, sal, fotografia, idRol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
             pool.query(queryString, [
                 usuario.nombre,
                 usuario.apPaterno,
@@ -78,6 +78,8 @@ class Usuarios_Model {
                 usuario.fechaNacimiento,
                 usuario.telefono,
                 usuario.correo,
+                usuario.escuela || null,
+                usuario.disciplina || null,
                 hash,
                 sal,
                 usuario.fotografia, 
