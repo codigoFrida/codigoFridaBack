@@ -105,6 +105,19 @@ class Modulos_Controller {
             Response.ErrorGenerico();
         })
     }
+
+    addComentario(req, res) {
+        const Response = new HttpResponse(res);
+        const Modulos = new Modulos_Model();
+
+        req.body.idContenido = req.params.idContenido;
+        Modulos.addComentario(req.body).then(meta => {
+            Response.created(meta);
+        }).catch(err => {
+            console.error(err);
+            Response.ErrorGenerico();
+        })
+    }
 }
 
 export default Modulos_Controller

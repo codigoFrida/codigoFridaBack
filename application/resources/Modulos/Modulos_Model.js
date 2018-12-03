@@ -164,6 +164,18 @@ class Modulos_Model {
             ]).then(meta => resolve(meta)).catch(err => reject(err));
         })
     }
+
+    addComentario(comentario) {
+        return new Promise((resolve, reject) => {
+            const queryString = `INSERT INTO contenido_comentarios (idUsuario, idContenido, comentario) VALUES 
+            (?, ?, ?)`;
+            pool.query(queryString, [
+                comentario.idUsuario,
+                comentario.idContenido,
+                comentario.comentario
+            ]).then(meta => resolve(meta)).catch(err => reject(err));
+        })
+    }
 }
 
 export default Modulos_Model;
