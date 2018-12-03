@@ -7,7 +7,9 @@ const controller = new Modulos_Controller();
 
 router.get('/', controller.getPaged)
 router.get('/:id', controller.getById)
+router.post('/:id/contenido', controller.addContenido)
 router.post('/:idModulo/contenido/:idContenido/ejercicio', controller.uploadEjercicio)
+router.post('/:idModulo/contenido/:idContenido/material', controller.uploadMaterial)
 
 
 export default router;

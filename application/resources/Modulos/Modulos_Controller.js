@@ -2,6 +2,7 @@ import HttpResponse from '../../system/HttpResponse'
 import Modulos_Model from './Modulos_Model'
 import UUID from 'uuid/v4'
 import fs from 'fs'
+import { resolve } from 'bluebird';
 
 class Modulos_Controller {
     constructor() {}
@@ -29,6 +30,42 @@ class Modulos_Controller {
         })
     }
 
+    addContenido(req, res) {
+        const Response = new HttpResponse(res);
+        const Modulos = new Modulos_Model();
+
+        Modulos.getNextContenidoByModulo(req.params.id).then(numeroSiguiente => {
+            req.body.numero = numeroSiguiente;
+            req.body.idModulo = req.params.id;
+            return Modulos.addContenido(req.body);
+        }).then(meta => {
+            return Modulos.getContenidoById(meta.insertId)
+        }).then(contenido => {
+            Response.created(contenido);
+        }).catch(err => {
+            console.error(err);
+            Response.ErrorGenerico();
+        })
+    }
+    
+    addContenido(req, res) {
+        const Response = new HttpResponse(res);
+        const Modulos = new Modulos_Model();
+
+        Modulos.getNextContenidoByModulo(req.params.id).then(numeroSiguiente => {
+            req.body.numero = numeroSiguiente;
+            req.body.idModulo = req.params.id;
+            return Modulos.addContenido(req.body);
+        }).then(meta => {
+            return Modulos.getContenidoById(meta.insertId)
+        }).then(contenido => {
+            Response.created(contenido);
+        }).catch(err => {
+            console.error(err);
+            Response.ErrorGenerico();
+        })
+    }
+
     uploadEjercicio(req, res) {
         const Response = new HttpResponse(res);
         const Modulos = new Modulos_Model();
@@ -42,6 +79,26 @@ class Modulos_Controller {
         ejercicio.idContenido = req.params.idContenido
 
         Modulos.addEjercicio(ejercicio).then(meta => {
+            Response.ok(meta);
+        }).catch(err => {
+            console.error(err);
+            Response.ErrorGenerico();
+        })
+    }
+
+    uploadMaterial(req, res) {
+        const Response = new HttpResponse(res);
+        const Modulos = new Modulos_Model();
+
+        const nombreArchivo = `M${req.params.idModulo}C${req.params.idContenido}_${req.body.nombre}`;
+        fs.writeFile(`application/public/materiales/${nombreArchivo}`, req.body.archivo, 'base64', (err) => {if (err) {console.error(err); throw err}});
+
+        delete req.body.archivo;
+        const material = req.body;
+        material.archivo = nombreArchivo;
+        material.idContenido = req.params.idContenido
+
+        Modulos.addMaterial(material).then(meta => {
             Response.ok(meta);
         }).catch(err => {
             console.error(err);
