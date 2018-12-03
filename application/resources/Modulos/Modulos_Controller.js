@@ -33,7 +33,7 @@ class Modulos_Controller {
         const Response = new HttpResponse(res);
         const Modulos = new Modulos_Model();
 
-        const nombreArchivo = UUID();
+        const nombreArchivo = `E${req.body.idEquipo}U${req.body.idUsuario}M${req.params.idModulo}C${req.params.idContenido}_${req.body.nombreArchivo}`;
         fs.writeFile(`application/public/ejercicios/${nombreArchivo}`, req.body.archivo, 'base64', (err) => {if (err) {console.error(err); throw err}});
 
         delete req.body.archivo;
