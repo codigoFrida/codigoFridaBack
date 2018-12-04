@@ -34,7 +34,7 @@ class Equipos_Controller {
         const Response = new HttpResponse(res);
         const Equipos = new Equipos_Model();
 
-        Equipos.addUsuarioToEquipo(req.params.idEquipo, req.body.idUsuario).then(meta => {
+        Equipos.addUsuarioToEquipo(req.body.idUsuario, req.params.idEquipo).then(meta => {
             Response.ok(meta);
         }).catch(err => {
             console.error(err);
