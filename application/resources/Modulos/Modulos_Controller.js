@@ -1,6 +1,7 @@
 import HttpResponse from '../../system/HttpResponse'
 import Modulos_Model from './Modulos_Model'
 import fs from 'fs'
+import Mailer from '../../system/Mailer';
 
 class Modulos_Controller {
     constructor() {}
@@ -63,6 +64,9 @@ class Modulos_Controller {
         Modulos.addEjercicio(ejercicio).then(meta => {
             return Modulos.asignarInsignia(req.idEquipo, req.params.idModulo)
         }).then(meta => {
+            if (meta) {
+                Mailer('', 'La wea jala', 'la wea efectivamente jalaaaaaaaaa')
+            }
             Response.ok(meta);
         }).catch(err => {
             console.error(err);

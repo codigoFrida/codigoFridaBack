@@ -14,6 +14,7 @@ class Equipos_Model {
           equipos = rows;
         const promesas = [];
         const promesas2 = [];
+        const promesas3 = [];
       
         rows.forEach(row => {
           //Promesa Query para Obtener Fridas
@@ -29,11 +30,24 @@ class Equipos_Model {
                 row.id
             ]);
           promesas2.push(promesa2);
+          
+          //Promesa Query para Obtener Mentores
+          queryString = 
+          `SELECT CAST(sum(progreso) / count(*) as unsigned ) as progreso from (
+            SELECT id, numero, nombre as nombreModulo, fechaLimite, descripcion, cast((coalesce(progreso.subidos / progreso.todos, 0) * 100) as SIGNED) as progreso FROM modulos LEFT JOIN (
+                SELECT idModulo, count(*) as todos, count(archivoSubido) as subidos from modulos inner join modulo_contenidos mc on modulos.id = mc.idModulo left join ejercicios e on mc.id = e.idContenidoModulo and e.idEquipo = ? group by idModulo
+              ) AS progreso on progreso.idModulo = id
+            ) as t`;
+          const promesa3 = pool.query(queryString, [
+                row.id
+            ]);
+          promesas3.push(promesa3);
         });
       
           var res = Promise.all(promesas);
           var res2 = Promise.all(promesas2);
-          return Promise.all([res, res2]);
+          var res3 = Promise.all(promesas3);
+          return Promise.all([res, res2, res3]);
       
       }).then(resultados => {
         resultados[0].forEach((resultado, index) => {
@@ -41,6 +55,9 @@ class Equipos_Model {
         })
         resultados[1].forEach((resultado, index) => {
           equipos[index].mentores = resultado
+        })
+        resultados[2].forEach((resultado, index) => {
+          equipos[index].progreso = resultado[0].progreso
         })
       
         console.log(JSON.stringify(equipos));
