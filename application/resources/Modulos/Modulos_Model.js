@@ -202,7 +202,7 @@ class Modulos_Model {
                         resolve(meta);
                     }).catch(err => reject(err));
                 } else {
-                    resolve([]);
+                    resolve(null);
                 }
             }).catch(err => {
                 reject(err)
