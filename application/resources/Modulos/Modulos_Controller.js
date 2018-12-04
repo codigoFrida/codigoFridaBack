@@ -47,24 +47,6 @@ class Modulos_Controller {
             Response.ErrorGenerico();
         })
     }
-    
-    addContenido(req, res) {
-        const Response = new HttpResponse(res);
-        const Modulos = new Modulos_Model();
-
-        Modulos.getNextContenidoByModulo(req.params.id).then(numeroSiguiente => {
-            req.body.numero = numeroSiguiente;
-            req.body.idModulo = req.params.id;
-            return Modulos.addContenido(req.body);
-        }).then(meta => {
-            return Modulos.getContenidoById(meta.insertId)
-        }).then(contenido => {
-            Response.created(contenido);
-        }).catch(err => {
-            console.error(err);
-            Response.ErrorGenerico();
-        })
-    }
 
     uploadEjercicio(req, res) {
         const Response = new HttpResponse(res);

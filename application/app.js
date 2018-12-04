@@ -29,7 +29,7 @@ app.use(urlencoded({limit: '50mb', extended: true}));
 app.use('/public', express.static('application/public'));
 
 // Registramos los routers
-app.use("/api", logCatcher, routes); // Middleware para el log de las rutas
+app.use("/api", routes); // Middleware para el log de las rutas
 
 // Manejamos el 404
 app.use((req, res) => {

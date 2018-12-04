@@ -15,7 +15,7 @@ class ContenidoAdicional_Model {
         const promesas = [];
       
         rows.forEach(row => {
-          const queryString = "SELECT  mc.idMateriales, mc.nombreArchivo, mc.urlDescarga FROM contenidoadicional as ca INNER JOIN materiales_contenidoadicional mc on ca.id = mc.idContenidoAdicional WHERE ca.id = ?";
+          const queryString = "SELECT mc.id, mc.nombre, mc.archivo FROM contenidoadicional as ca INNER JOIN materiales_contenidoadicional mc on ca.id = mc.idContenidoAdicional WHERE ca.id = ?";
           const promesa = pool.query(queryString, [
             row.id
           ]);
@@ -35,6 +35,29 @@ class ContenidoAdicional_Model {
       }).catch(err => {
           reject(err);
       });
+    })
+  }
+
+  addContenido(contenido) {
+    return new Promise((resolve, reject) => {
+      const queryString = `insert into contenidoadicional (descripcion, nombreContenido) VALUES
+      (?, ?)`;
+      pool.query(queryString, [
+        contenido.descripcion,
+        contenido.nombre
+      ]).then(meta => resolve(meta)).catch(err => reject(err));
+    })
+  }
+
+  addMaterial(material) {
+    return new Promise((resolve, reject) => {
+      const queryString = `INSERT INTO materiales_contenidoadicional (idContenidoAdicional, nombre, archivo) VALUES 
+      (?, ?, ?)`;
+      pool.query(queryString, [
+        material.idContenidoAdicional,
+        material.nombre,
+        material.archivo
+      ]).then(meta => resolve(meta)).catch(err => reject(err));
     })
   }
 }

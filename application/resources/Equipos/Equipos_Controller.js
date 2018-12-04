@@ -13,7 +13,8 @@ class Equipos_Controller {
         Equipos.getPaged(page, perPage).then(modulos => {
             Response.ok(modulos);
         }).catch(err => {
-            Response.internalServerError(err);
+            console.error(err)
+            Response.ErrorGenerico();
         })
     }
 

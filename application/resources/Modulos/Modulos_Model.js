@@ -51,7 +51,7 @@ class Modulos_Model {
                 }
         
                 // Llenamos los materiales y comentarios del contenido a partir de aquí
-                const queryStringMateriales = "SELECT id, nombre as urlDescarga, nombre as nombreArchivo FROM materiales WHERE idContenido = ?"
+                const queryStringMateriales = "SELECT id, nombre, archivo FROM materiales WHERE idContenido = ?"
                 const promesasMateriales = [];
                 const queryStringComentarios = "SELECT cc.idUsuario, CONCAT(u.nombre, ' ', u.apPaterno, ' ', u.apMaterno) AS nombreAutor, cc.createdAt as fecha, cc.comentario FROM contenido_comentarios AS cc INNER JOIN usuarios AS u on cc.idUsuario = u.id where cc.idContenido = ?"
                 const promesasComentarios = [];
