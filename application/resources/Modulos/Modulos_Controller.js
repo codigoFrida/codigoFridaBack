@@ -65,7 +65,7 @@ class Modulos_Controller {
             return Modulos.asignarInsignia(req.idEquipo, req.params.idModulo)
         }).then(meta => {
             if (meta) {
-                Mailer('aliy@ucol.mx', 'La wea jala', 'la wea efectivamente jalaaaaaaaaa')
+                Mailer('', 'La wea jala', 'la wea efectivamente jalaaaaaaaaa')
             }
             Response.ok(meta);
         }).catch(err => {
