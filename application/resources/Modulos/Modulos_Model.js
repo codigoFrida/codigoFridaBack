@@ -53,9 +53,12 @@ class Modulos_Model {
                 // Llenamos los materiales y comentarios del contenido a partir de aquí
                 const queryStringMateriales = "SELECT id, nombre, archivo FROM materiales WHERE idContenido = ?"
                 const promesasMateriales = [];
-                const queryStringComentarios = "SELECT cc.idUsuario, CONCAT(u.nombre, ' ', u.apPaterno, ' ', u.apMaterno) AS nombreAutor, cc.createdAt as fecha, cc.comentario FROM contenido_comentarios AS cc INNER JOIN usuarios AS u on cc.idUsuario = u.id where cc.idContenido = ?"
+                const queryStringComentarios = `SELECT cc.idUsuario, CONCAT(u.nombre, ' ', u.apPaterno, ' ', u.apMaterno) AS nombreAutor, cc.createdAt as fecha, cc.comentario FROM contenido_comentarios AS cc INNER JOIN usuarios AS u on cc.idUsuario = u.id where cc.idContenido = ? and cc.idEquipo = ?`
                 const promesasComentarios = [];
-                const queryStringEjercicio = "SELECT mc.ejercicio as descripcion, e.archivoSubido from modulo_contenidos as mc left join ejercicios e on mc.id = e.idContenidoModulo where mc.id = ?"
+                const queryStringEjercicio = 
+                `SELECT mc.ejercicio as descripcion, e.nombreArchivo as nombre, e.archivoSubido as archivo from modulo_contenidos as mc left join
+                    (select * from ejercicios where idEquipo = ?) as e
+                     on mc.id = e.idContenidoModulo where mc.id = ?`
                 const promesasEjercicio = [];
                 
                 g_contenidos.forEach(contenido => {
@@ -67,12 +70,14 @@ class Modulos_Model {
         
                     // Comentarios
                     const promesaComentarios = pool.query(queryStringComentarios, [
-                        contenido.id
+                        contenido.id,
+                        idEquipo
                     ])
                     promesasComentarios.push(promesaComentarios);
         
                     // Ejercicio
                     const promesaEjercicio = pool.query(queryStringEjercicio, [
+                        idEquipo,
                         contenido.id
                     ])
                     promesasEjercicio.push(promesaEjercicio);
@@ -168,11 +173,12 @@ class Modulos_Model {
 
     addComentario(comentario) {
         return new Promise((resolve, reject) => {
-            const queryString = `INSERT INTO contenido_comentarios (idUsuario, idContenido, comentario) VALUES 
-            (?, ?, ?)`;
+            const queryString = `INSERT INTO contenido_comentarios (idUsuario, idContenido, idEquipo, comentario) VALUES 
+            (?, ?, ?, ?)`;
             pool.query(queryString, [
                 comentario.idUsuario,
                 comentario.idContenido,
+                comentario.idEquipo,
                 comentario.comentario
             ]).then(meta => resolve(meta)).catch(err => reject(err));
         })
