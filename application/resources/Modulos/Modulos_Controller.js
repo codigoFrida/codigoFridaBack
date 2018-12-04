@@ -1,8 +1,6 @@
 import HttpResponse from '../../system/HttpResponse'
 import Modulos_Model from './Modulos_Model'
-import UUID from 'uuid/v4'
 import fs from 'fs'
-import { resolve } from 'bluebird';
 
 class Modulos_Controller {
     constructor() {}
@@ -11,7 +9,9 @@ class Modulos_Controller {
         const Response = new HttpResponse(res);
         const Modulos = new Modulos_Model();
 
-        Modulos.getPaged(req.idEquipo).then(modulos => {
+        const idEquipo = req.idEquipo || req.query.idEquipo;
+
+        Modulos.getPaged(idEquipo).then(modulos => {
             Response.ok(modulos);
         }).catch(err => {
             Response.internalServerError(err);
