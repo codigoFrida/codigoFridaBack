@@ -129,8 +129,20 @@ class Equipos_Model {
     })
   }
   
-  addUserToEquipo(idUsuario, idEquipo) {
+  addUsuarioToEquipo(idUsuario, idEquipo) {
     const queryString = 'INSERT INTO usuarios_equipos (idUsuario, idEquipo) VALUES (?, ?)';
+    return new Promise((resolve, reject) => {
+      pool.query(queryString, [
+        idUsuario,
+        idEquipo
+      ]).then(meta => {
+        resolve(meta);
+      }).catch(err => reject(err))
+    })
+  }
+
+  deleteUsuarioFromEquipo(idEquipo, idUsuario) {
+    const queryString = 'DELETE FROM usuarios_equipos WHERE idUsuario = ? AND idEquipo = ?';
     return new Promise((resolve, reject) => {
       pool.query(queryString, [
         idUsuario,
