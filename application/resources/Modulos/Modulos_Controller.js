@@ -24,7 +24,9 @@ class Modulos_Controller {
         const Modulos = new Modulos_Model();
         const idModulo = req.params.id
 
-        Modulos.getById(idModulo, req.idEquipo).then(modulo => {
+        const idEquipo = req.idEquipo || req.query.idEquipo;
+
+        Modulos.getById(idModulo, idEquipo).then(modulo => {
             Response.ok(modulo);
         }).catch(err => {
             Response.notFound(err);
