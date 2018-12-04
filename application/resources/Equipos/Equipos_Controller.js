@@ -29,6 +29,30 @@ class Equipos_Controller {
             Response.notFound(err);
         })
     }
+
+    addUsuarioToEquipo(req, res) {
+        const Response = new HttpResponse(res);
+        const Equipos = new Equipos_Model();
+
+        Equipos.addUsuarioToEquipo(req.params.idEquipo, req.body.idUsuario).then(meta => {
+            Response.ok(meta);
+        }).catch(err => {
+            console.error(err);
+            Response.ErrorGenerico();
+        })
+    }
+
+    deleteUsuarioFromEquipo(req, res) {
+        const Response = new HttpResponse(res);
+        const Equipos = new Equipos_Model();
+        const {idEquipo, idUsuario} = req.params;
+        Equipos.deleteUsuarioFromEquipo(idEquipo, idUsuario).then(meta => {
+            Response.ok(meta);
+        }).catch(err => {
+            console.error(err);
+            Response.ErrorGenerico();
+        })
+    }
 }
 
 export default Equipos_Controller
