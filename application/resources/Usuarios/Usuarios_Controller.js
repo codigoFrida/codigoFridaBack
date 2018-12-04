@@ -8,7 +8,6 @@ class Usuarios_Controller {
     constructor() {}
 
     getPaged(req, res) {
-        console.log(req);
         const Response = new HttpResponse(res);
         const Usuarios = new Usuarios_Model();
         const {rol, equipo} = req.query;
