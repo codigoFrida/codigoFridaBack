@@ -84,7 +84,7 @@ class Usuarios_Controller {
                     fs.writeFileSync(`application/public/img/${nombreFotografia}.jpg`, fotografiaBase64, 'base64');
                 }
                 idUsuario = usuario.insertId;
-                return Equipos.addUserToEquipo(usuario.insertId, idEquipo)
+                return Equipos.addUsuarioToEquipo(usuario.insertId, idEquipo)
             }).then(meta => {
                 return Usuarios.getById(idUsuario)
             }).then(usuario => {
