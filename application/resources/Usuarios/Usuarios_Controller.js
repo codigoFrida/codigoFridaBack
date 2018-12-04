@@ -57,17 +57,43 @@ class Usuarios_Controller {
         let idEquipo;
         let idUsuario;
 
-        new Promise((resolve, reject) => {
-            // Primero revisamos si el equipo es un nombre o una clave
-            if (req.body.equipo.nombre) {// Es un nombre, hay que crear el equipo
-                Equipos.addEquipo(req.body.equipo.nombre).then(meta => resolve(meta.insertId))
-            } else { // Es una clave, hay que obtener el id del equipo
-                Equipos.getEquipoByClave(req.body.equipo.clave).then(equipo => resolve(equipo.id))
-            }
-        }).then(equipo => {
-            idEquipo = equipo;
-            delete req.body.equipo;
-
+        if (req.body.equipo) {
+            new Promise((resolve, reject) => {
+                // Primero revisamos si el equipo es un nombre o una clave
+                if (req.body.equipo.nombre) {// Es un nombre, hay que crear el equipo
+                    Equipos.addEquipo(req.body.equipo.nombre).then(meta => resolve(meta.insertId))
+                } else { // Es una clave, hay que obtener el id del equipo
+                    Equipos.getEquipoByClave(req.body.equipo.clave).then(equipo => resolve(equipo.id))
+                }
+            }).then(equipo => {
+                idEquipo = equipo;
+                delete req.body.equipo;
+    
+                // Guardamos la imagen en una variable
+                if (req.body.fotografia) {
+                    fotografiaBase64 = req.body.fotografia;
+                    nombreFotografia = UUID();
+                    req.body.fotografia = nombreFotografia;
+                } else {
+                    req.body.fotografia = 0
+                }
+    
+                return Usuarios.addUser(req.body);
+            }).then(usuario => {
+                if (fotografiaBase64) {
+                    fs.writeFileSync(`application/public/img/${nombreFotografia}.jpg`, fotografiaBase64, 'base64');
+                }
+                idUsuario = usuario.insertId;
+                return Equipos.addUserToEquipo(usuario.insertId, idEquipo)
+            }).then(meta => {
+                return Usuarios.getById(idUsuario)
+            }).then(usuario => {
+                Response.created(usuario);
+            }).catch(err => {
+                console.error(err);
+                Response.ErrorGenerico();   
+            })
+        } else {
             // Guardamos la imagen en una variable
             if (req.body.fotografia) {
                 fotografiaBase64 = req.body.fotografia;
@@ -77,21 +103,18 @@ class Usuarios_Controller {
                 req.body.fotografia = 0
             }
 
-            return Usuarios.addUser(req.body);
-        }).then(usuario => {
-            if (fotografiaBase64) {
-                fs.writeFileSync(`application/public/img/${nombreFotografia}.jpg`, fotografiaBase64, 'base64');
-            }
-            idUsuario = usuario.insertId;
-            return Equipos.addUserToEquipo(usuario.insertId, idEquipo)
-        }).then(meta => {
-            return Usuarios.getById(idUsuario)
-        }).then(usuario => {
-            Response.created(usuario);
-        }).catch(err => {
-            console.error(err);
-            Response.ErrorGenerico();   
-        })
+            Usuarios.addUser(req.body).then(usuario => {
+                if (fotografiaBase64) {
+                    fs.writeFileSync(`application/public/img/${nombreFotografia}.jpg`, fotografiaBase64, 'base64');
+                }
+                return Usuarios.getById(usuario.insertId)
+            }).then(usuario => {
+                Response.created(usuario);
+            }).catch(err => {
+                console.error(err);
+                Response.ErrorGenerico();   
+            })
+        }
     }
 }
 
