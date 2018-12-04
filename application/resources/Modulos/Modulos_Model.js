@@ -177,6 +177,38 @@ class Modulos_Model {
             ]).then(meta => resolve(meta)).catch(err => reject(err));
         })
     }
+
+    asignarInsignia(idEquipo, idModulo) {
+        console.log(idEquipo, idModulo);
+        return new Promise((resolve, reject) => {
+            const queryString = `SELECT ? as equipo, insignia.id as insignia FROM (
+                SELECT id, cast((coalesce(progreso.subidos / progreso.todos, 0) * 100) as SIGNED) as progreso FROM modulos LEFT JOIN (
+                                SELECT idModulo, count(*) as todos, count(archivoSubido) as subidos from modulos inner join modulo_contenidos mc on modulos.id = mc.idModulo left join ejercicios e on mc.id = e.idContenidoModulo and e.idEquipo = ? group by idModulo
+                              ) AS progreso on progreso.idModulo = id WHERE id = ?
+              ) as progreso inner join insignia on insignia.idModulo = progreso.id where progreso = 100;`;
+            pool.query(queryString, [
+                idEquipo, 
+                idEquipo, 
+                idModulo
+            ]).then(insignias => {
+                console.log(insignias);
+                if (insignias.length) {
+                    console.log(insignias);
+                    const values = insignias.map(({equipo, insignia}) => {
+                        return [equipo, insignia];
+                    });
+                    console.log(values);
+                    pool.query('insert into equipos_insignia (idEquipo, idInsignia) values ?', [values]).then(meta => {
+                        resolve(meta);
+                    }).catch(err => reject(err));
+                } else {
+                    resolve([]);
+                }
+            }).catch(err => {
+                reject(err)
+            })
+        })
+    }
 }
 
 export default Modulos_Model;
