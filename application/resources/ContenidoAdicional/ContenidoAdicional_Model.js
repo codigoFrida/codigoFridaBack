@@ -15,7 +15,7 @@ class ContenidoAdicional_Model {
         const promesas = [];
       
         rows.forEach(row => {
-          const queryString = "SELECT  mc.idMateriales, mc.nombreArchivo, mc.urlDescarga FROM contenidoadicional as ca INNER JOIN materiales_contenidoadicional mc on ca.id = mc.idContenidoAdicional WHERE ca.id = ?";
+          const queryString = "SELECT mc.id, mc.nombre, mc.archivo FROM contenidoadicional as ca INNER JOIN materiales_contenidoadicional mc on ca.id = mc.idContenidoAdicional WHERE ca.id = ?";
           const promesa = pool.query(queryString, [
             row.id
           ]);
