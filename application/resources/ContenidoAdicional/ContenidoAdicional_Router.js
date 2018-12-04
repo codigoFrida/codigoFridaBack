@@ -6,6 +6,7 @@ const router = Router();
 const controller = new ContenidoAdicional_Controller();
 
 router.get('/', controller.getPaged)
-// router.get('/:id', controller.getById)
+router.post('/', controller.addContenido)
+router.post('/:idContenidoAdicional/material', controller.uploadMaterial)
 
 export default router;

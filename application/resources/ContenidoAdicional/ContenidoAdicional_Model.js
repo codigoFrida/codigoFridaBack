@@ -37,6 +37,29 @@ class ContenidoAdicional_Model {
       });
     })
   }
+
+  addContenido(contenido) {
+    return new Promise((resolve, reject) => {
+      const queryString = `insert into contenidoadicional (descripcion, nombreContenido) VALUES
+      (?, ?)`;
+      pool.query(queryString, [
+        contenido.descripcion,
+        contenido.nombre
+      ]).then(meta => resolve(meta)).catch(err => reject(err));
+    })
+  }
+
+  addMaterial(material) {
+    return new Promise((resolve, reject) => {
+      const queryString = `INSERT INTO materiales_contenidoadicional (idContenidoAdicional, nombre, archivo) VALUES 
+      (?, ?, ?)`;
+      pool.query(queryString, [
+        material.idContenidoAdicional,
+        material.nombre,
+        material.archivo
+      ]).then(meta => resolve(meta)).catch(err => reject(err));
+    })
+  }
 }
 
 export default ContenidoAdicional_Model;
